@@ -1,23 +1,19 @@
 from django.db import models
-
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Restaurant(models.Model):
     name = models.TextField()
     foodtype = models.TextField()
     city = models.TextField()
     country = models.TextField()
-    qualification = models.FloatField(
-            blank=True, null=True)
-    visited = models.TextField(null=True, blank=True)
+    visited = models.BooleanField()
+    qualification = models.FloatField(null=True,
+    validators=[MinValueValidator(0.0), MaxValueValidator(100.0)],)
 
-    def set_visited(self):
-        self.visited = not self.visited
-        self.save()
-
-    def set_qualification(self, number):
-        self.qualification = number
-        self.save()
-
+    def clean(self):
+        if self.visited and not self.qualification.strip():
+            raise ValidationError('Qualification is required')
     def __str__(self):
         return f"{self.name} - {self.city},{self.country} - {self.foodtype}\n"
 
