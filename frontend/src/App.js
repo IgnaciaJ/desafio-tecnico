@@ -16,7 +16,9 @@ class App extends Component {
     this.state = {
       viewVisited: false,
       filter:"",
+      city:"",
       RestaurantList: [],
+      FilteredList: [],
       modal: false,
       activeItem: {
         name: "",
@@ -36,7 +38,7 @@ class App extends Component {
   refreshList = () => {
     axios
       .get("/restaurants/")
-      .then((res) => this.setState({ RestaurantList: res.data }))
+      .then((res) => this.setState({ RestaurantList: res.data}))
       .catch((err) => console.log(err));
   };
   toggle = () => {
@@ -47,15 +49,21 @@ class App extends Component {
     this.setState({ filter: e.target.value});
   };
 
-  findByType = (type) => 
-    axios.get(`/restaurants?foodtype=${type}`)
-      .then((res) => {
+  onChangeSearchCity = (e) => {
+    this.setState({ city: e.target.value});
+    this.findByCity(e);
+  };
 
-        this.setState({ filter: res.data});
+  findByCity = (e) => {
+    axios.get(`/restaurants/?city=${e.target.value}`)
+      .then((res) => {
+        this.setState({ city: e.target.value});
+        this.setState({FilteredList: res.data});
+        this.refreshList();
       })
-      .catch((e) => {
-        console.log(e);
-      });
+      return;
+    };
+
   
 
   onItemCheck(e, item) {
@@ -121,10 +129,12 @@ class App extends Component {
 
   renderTabList = () => {
     return (
+      
       <div className="nav nav-tabs">
-        
-    <FormGroup>
-    <label for="restaurant-country">¡Filtra por tipo de restaurant!</label><br/>
+
+      <div>
+
+    <label for="restaurant-country">¡Filtra por tipo de restaurant!  </label><br/>
       <input
           labelId="demo-controlled-open-select-label"
           id="demo-controlled-open-select"
@@ -133,7 +143,18 @@ class App extends Component {
           onChange={this.onChangeSearchType}
         >
       </input>
-    </FormGroup>
+    </div>
+    <div>
+    <label for="restaurant-country">   ¡Filtra por Ciudad!  </label><br/>
+      <input
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          value={this.state.city}
+          type="text"
+          onChange={this.onChangeSearchCity}
+        >
+      </input>
+    </div>
     <br/>
         <span
           className={this.state.viewVisited === true ? "nav-link active" : "nav-link"}
@@ -160,15 +181,26 @@ class App extends Component {
   renderItems = (field) => {
     const { viewVisited } = this.state;
     let newItems;
-    
-    if (this.state.viewVisited === "todos"){
-      newItems = this.state.RestaurantList.filter(
-        (item) => item.foodtype.toUpperCase().includes(this.state.filter.toUpperCase()),
-    );
-    } else {
-      newItems = this.state.RestaurantList.filter(
-        (item) => item.visited === viewVisited && item.foodtype.toUpperCase().includes(this.state.filter.toUpperCase()),
-    );
+    if (this.state.city === ""){
+      if (this.state.viewVisited === "todos"){
+        newItems = this.state.RestaurantList.filter(
+          (item) => item.foodtype.toUpperCase().includes(this.state.filter.toUpperCase()),
+      );
+      } else {
+        newItems = this.state.RestaurantList.filter(
+          (item) => item.visited === viewVisited && item.foodtype.toUpperCase().includes(this.state.filter.toUpperCase()),
+      );
+    } }
+    else {
+      if (this.state.viewVisited === "todos"){
+        newItems = this.state.FilteredList.filter(
+          (item) => item.foodtype.toUpperCase().includes(this.state.filter.toUpperCase()),
+      );
+      } else {
+        newItems = this.state.FilteredList.filter(
+          (item) => item.visited === viewVisited && item.foodtype.toUpperCase().includes(this.state.filter.toUpperCase()),
+      );
+      };
     };
 
 
@@ -220,15 +252,8 @@ class App extends Component {
           {/* <div className="col-md-6 col-sm-10 mx-auto p-0">
           <div className="card p-3">
               <div className="mb-4">  */}
-                <div class="row">
-                <div><button
-                  className="btn btn-primary"
-                  onClick={this.createItem}
-                >
-                  Agregar Restaurant
-                </button></div>
-                </div>
             
+                <h5>Algunas Herramientas de búsqueda🔧</h5><br/>
               {this.renderTabList()}
               <table class="table table-dark thead-light">
               <thead>
@@ -248,6 +273,14 @@ class App extends Component {
              
               </tbody>
               </table>
+              <div class="row">
+                <div><button
+                  className="btn btn-primary"
+                  onClick={this.createItem}
+                >
+                  Agregar Restaurant
+                </button></div><br/>
+                </div>
              {/* </div> 
           </div> 
         </div>  */}
