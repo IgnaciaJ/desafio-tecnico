@@ -15,11 +15,9 @@ class App extends Component {
     super(props);
     this.state = {
       viewVisited: false,
+      filter:"",
       RestaurantList: [],
       modal: false,
-      filtered: [],
-
-      select2: undefined,
       activeItem: {
         name: "",
         qualification: "",
@@ -44,6 +42,21 @@ class App extends Component {
   toggle = () => {
     this.setState({ modal: !this.state.modal });
   };
+
+  onChangeSearchType = (e) => {
+    this.setState({ filter: e.target.value});
+  };
+
+  findByType = (type) => 
+    axios.get(`/restaurants?foodtype=${type}`)
+      .then((res) => {
+
+        this.setState({ filter: res.data});
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  
 
   onItemCheck(e, item) {
     let tempList = this.state.RestaurantList;
@@ -83,28 +96,6 @@ class App extends Component {
     .then((res) => this.refreshList());
   };
 
-  onFilteredChangeCustom = (value, accessor) => {
-    let filtered = this.state.filtered;
-    let insertNewFilter = 1;
-
-    if (filtered.length) {
-      filtered.forEach((filter, i) => {
-        if (filter["id"] === accessor) {
-          if (value === "" || !value.length) filtered.splice(i, 1);
-          else filter["value"] = value;
-
-          insertNewFilter = 0;
-        }
-      });
-    }
-
-    if (insertNewFilter) {
-      filtered.push({ id: accessor, value: value });
-    }
-
-    this.setState({ filtered: filtered });
-  };
-
   createItem = () => {
     const item = { name: "", foodtype: "", city: "", country: "", qualification:null, completed: false };
 
@@ -123,6 +114,7 @@ class App extends Component {
     return this.setState({ viewVisited: false });
   };
 
+
   displayAll = () => {
       return this.setState({ viewVisited: "todos"});
   };
@@ -130,8 +122,21 @@ class App extends Component {
   renderTabList = () => {
     return (
       <div className="nav nav-tabs">
+        
+    <FormGroup>
+    <label for="restaurant-country">¡Filtra por tipo de restaurant!</label><br/>
+      <input
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          value={this.state.filter}
+          type="text"
+          onChange={this.onChangeSearchType}
+        >
+      </input>
+    </FormGroup>
+    <br/>
         <span
-          className={this.state.viewVisited ? "nav-link active" : "nav-link"}
+          className={this.state.viewVisited === true ? "nav-link active" : "nav-link"}
           onClick={() => this.displayVisited(true)}
         >
             Visitado
@@ -143,7 +148,7 @@ class App extends Component {
           Sin Visitar
         </span>
         <span
-          className={this.state.viewVisited ? "nav-link active" : "nav-link active"}
+          className={this.state.viewVisited === "todos" ? "nav-link active" : "nav-link"}
           onClick={() => this.displayAll()}
           >
             Todos
@@ -152,17 +157,19 @@ class App extends Component {
     );
   };
 
-  renderItems = () => {
+  renderItems = (field) => {
     const { viewVisited } = this.state;
     let newItems;
+    
     if (this.state.viewVisited === "todos"){
-      newItems = this.state.RestaurantList
+      newItems = this.state.RestaurantList.filter(
+        (item) => item.foodtype.toUpperCase().includes(this.state.filter.toUpperCase()),
+    );
     } else {
       newItems = this.state.RestaurantList.filter(
-        (item) => item.visited === viewVisited
+        (item) => item.visited === viewVisited && item.foodtype.toUpperCase().includes(this.state.filter.toUpperCase()),
     );
     };
-    newItems.sort((a,b) => a. - b.timeM);
 
 
     return newItems.map((item) => (
@@ -213,13 +220,14 @@ class App extends Component {
           {/* <div className="col-md-6 col-sm-10 mx-auto p-0">
           <div className="card p-3">
               <div className="mb-4">  */}
-                <button
+                <div class="row">
+                <div><button
                   className="btn btn-primary"
                   onClick={this.createItem}
                 >
                   Agregar Restaurant
-                </button>
-            
+                </button></div>
+                </div>
             
               {this.renderTabList()}
               <table class="table table-dark thead-light">
