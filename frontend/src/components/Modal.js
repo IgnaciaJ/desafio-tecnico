@@ -97,7 +97,7 @@ export default class CustomModal extends Component {
                 onChange={this.handleChange}
                 placeholder="Calificación"
               />
-              {!this.state.activeItem.qualification ? "" : this.state.activeItem.qualification}
+   
             </FormGroup>
             <FormGroup check>
               <Label check>

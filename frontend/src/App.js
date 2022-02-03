@@ -18,6 +18,8 @@ class App extends Component {
       filter:"",
       city:"",
       RestaurantList: [],
+      key: null,
+      direction: "ascending",
       FilteredList: [],
       modal: false,
       activeItem: {
@@ -97,7 +99,14 @@ class App extends Component {
       .post("/restaurants/", item)
       .then((res) => this.refreshList());
   };
-
+  
+  requestSort = key => {
+    let direction = 'ascending';
+    if (this.state.key === key && this.state.direction === 'ascending') {
+      direction = 'descending';
+    }
+    this.setState({ key: key, direction: direction});
+  }
   handleDelete = (item) => {
     axios
     .delete(`/restaurants/${item.id}/`)
@@ -154,6 +163,7 @@ class App extends Component {
           onChange={this.onChangeSearchCity}
         >
       </input>
+
     </div>
     <br/>
         <span
@@ -181,6 +191,7 @@ class App extends Component {
   renderItems = (field) => {
     const { viewVisited } = this.state;
     let newItems;
+
     if (this.state.city === ""){
       if (this.state.viewVisited === "todos"){
         newItems = this.state.RestaurantList.filter(
@@ -203,7 +214,16 @@ class App extends Component {
       };
     };
 
-
+    if (this.state.key !== null) {
+      newItems.sort((a, b) => {
+      if (a[this.state.key] < b[this.state.key]) {
+        return this.state.direction === 'ascending' ? -1 : 1;
+      }
+      if (a[this.state.key] > b[this.state.key]) {
+        return this.state.direction  === 'ascending' ? 1 : -1;
+      }
+      return 0;
+      })};
     return newItems.map((item) => (
       <tr>
           <th scope="row">{item.name}</th>
@@ -257,16 +277,38 @@ class App extends Component {
               {this.renderTabList()}
               <table class="table table-dark thead-light">
               <thead>
-              <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Tipo de Restaurant</th>
-                <th scope="col">Ubicación</th>
-                <th scope="col">Calificación</th>
-                <th scope="col">Visitado</th>
-                <th scope="col">Editar</th>
+                <tr>
+                  <th>
+                    <button class="btn btn-dark mr-2" onClick={() => this.requestSort('name')}>
+                      Nombre
+                    </button>
+                  </th>
+                  <th>
+                    <button class="btn btn-dark mr-2" onClick={() => this.requestSort('foodtype')}>
+                      Tipo de Restaurant
+                    </button>
+                  </th>
+                  <th>
+                    <button class="btn btn-dark mr-2" onClick={() => this.requestSort('city')}>
+                      Ubicación
+                    </button>
+                  </th>
+                  <th>
+                    <button class="btn btn-dark mr-2" onClick={() => this.requestSort('qualification')}>
+                      Calificación
+                    </button>
+                  </th>
+                  <th>
+                    <button class="btn btn-dark mr-3" onClick={() => this.requestSort('visited')}>
+                      Visitado
+                    </button>
+                  </th>
+                  <th scope="col">Editar</th>
                 <th scope="col">Eliminar</th>
-              </tr>
+                </tr>
               </thead>
+              
+             
               <tbody>
            
                 {this.renderItems()} 
