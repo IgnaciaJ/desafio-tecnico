@@ -243,6 +243,15 @@ class App extends Component {
 
     if (this.state.key !== null) {
       newItems.sort((a, b) => {
+    if (typeof a[this.state.key] === "string" ){
+      if (a[this.state.key].toUpperCase() < b[this.state.key].toUpperCase()) {
+        return this.state.direction === 'ascending' ? -1 : 1;
+      }
+      if (a[this.state.key].toUpperCase() > b[this.state.key].toUpperCase()) {
+        return this.state.direction  === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    } else {
       if (a[this.state.key] < b[this.state.key]) {
         return this.state.direction === 'ascending' ? -1 : 1;
       }
@@ -250,7 +259,9 @@ class App extends Component {
         return this.state.direction  === 'ascending' ? 1 : -1;
       }
       return 0;
-      })};
+    };
+      })
+    };
     return newItems.map((item) => (
       <tr>
           <th scope="row">{item.name}</th>
