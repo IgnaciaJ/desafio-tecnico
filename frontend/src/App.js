@@ -2,7 +2,7 @@ import React, { Component} from "react";
 import Modal from "./components/Modal";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.css';
-
+import './App.css';
 import {
   FormGroup,
  
@@ -139,54 +139,81 @@ class App extends Component {
   renderTabList = () => {
     return (
       
-      <div className="nav nav-tabs">
+      <div className="nav nav-tabs thead-light nav-tabs-dar">
 
-      <div>
 
-    <label for="restaurant-country">¡Filtra por tipo de restaurant!  </label><br/>
-      <input
-          labelId="demo-controlled-open-select-label"
-          id="demo-controlled-open-select"
-          value={this.state.filter}
-          type="text"
-          onChange={this.onChangeSearchType}
-        >
-      </input>
-    </div>
-    <div>
-    <label for="restaurant-country">   ¡Filtra por Ciudad!  </label><br/>
-      <input
-          labelId="demo-controlled-open-select-label"
-          id="demo-controlled-open-select"
-          value={this.state.city}
-          type="text"
-          onChange={this.onChangeSearchCity}
-        >
-      </input>
-
-    </div>
-    <br/>
+      <table class="table-dark  thead-light">
+     
+      <tr>
+        
+    <th>
         <span
           className={this.state.viewVisited === true ? "nav-link active" : "nav-link"}
           onClick={() => this.displayVisited(true)}
         >
             Visitado
         </span>
+        </th>
+        <th>
         <span
           className={this.state.viewVisited ? "nav-link" : "nav-link active"}
           onClick={() => this.displayVisited(false)}
         >
           Sin Visitar
-        </span>
+        </span></th>
+        <th>
         <span
           className={this.state.viewVisited === "todos" ? "nav-link active" : "nav-link"}
           onClick={() => this.displayAll()}
           >
             Todos
-        </span>
+        </span></th>
+        <th><span>
+           Buscar por 🔎:
+        </span></th>
+        <th>
+        <div class="col-xs-2">
+      <input
+          class= "form-control form-control-sm"
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          value={this.state.filter}
+          type="text"
+          placeholder="Tipo de restaurante"
+          name="type-f"
+          onChange={this.onChangeSearchType}
+        >
+        
+      </input>
       </div>
+      </th>
+      <th>
+    <div>
+      <input
+          class= "form-control form-control-sm"
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          name="city-f"
+          value={this.state.city}
+          placeholder="Ciudad"
+          type="text"
+          onChange={this.onChangeSearchCity}
+        >
+      </input>
+      
+    </div>
+    
+    </th>
+    <th>     </th>
+    <br/>
+        </tr>
+    </table>
+      </div>
+      
+      
     );
   };
+  
 
   renderItems = (field) => {
     const { viewVisited } = this.state;
@@ -228,7 +255,7 @@ class App extends Component {
       <tr>
           <th scope="row">{item.name}</th>
           <td>{item.foodtype}</td>
-          <td>{item.city},{item.country}</td>
+          <td>{item.city}, {item.country}</td>
           <td>{item.qualification}</td>
           <td> 
             
@@ -265,17 +292,26 @@ class App extends Component {
   render() {
     return (
       
-      <main className="container">
+      <main>
 
-        <h1 className="text-black text-center my-4">@MejorConTocino🍔🍸🍣🌎🥑</h1>
-          
+      <nav className="navbar navbar-expand-lg navbar-collapse navbar-light bg-light">
+        <a href="/" className="navbar-brand"><strong>
+          @MejorConTocinoReviews🍔🍸🍣🥑
+          </strong></a>
+        <div className="navbar-nav mr-auto">
+        </div>
+      </nav>
+      <div class="image" >
+      <br/>
+      <br/>
+      <div class="container">
           {/* <div className="col-md-6 col-sm-10 mx-auto p-0">
           <div className="card p-3">
               <div className="mb-4">  */}
             
-                <h5>Algunas Herramientas de búsqueda🔧</h5><br/>
+                
               {this.renderTabList()}
-              <table class="table table-dark thead-light">
+              <table class="table table-dark thead-light table-striped">
               <thead>
                 <tr>
                   <th>
@@ -285,7 +321,7 @@ class App extends Component {
                   </th>
                   <th>
                     <button class="btn btn-dark mr-2" onClick={() => this.requestSort('foodtype')}>
-                      Tipo de Restaurant
+                      Tipo de Restaurante
                     </button>
                   </th>
                   <th>
@@ -315,7 +351,7 @@ class App extends Component {
              
               </tbody>
               </table>
-              <div class="row">
+              <div class="col-md-12 text-center">
                 <div><button
                   className="btn btn-primary"
                   onClick={this.createItem}
@@ -323,9 +359,9 @@ class App extends Component {
                   Agregar Restaurant
                 </button></div><br/>
                 </div>
-             {/* </div> 
-          </div> 
-        </div>  */}
+              </div>
+              </div>
+             
         {this.state.modal ? (
 
           <Modal

@@ -7,7 +7,11 @@
   pointer-events: none;
 }
 
-
+.image {
+  height: 100vh;
+  background-image: url('https://www.theworlds50best.com/latinamerica/en/filestore/png/LatAm2021-The-List-Homepage-Banner.png');
+  opacity: 0.85;
+}
 
 
 

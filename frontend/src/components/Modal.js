@@ -36,7 +36,7 @@ export default class CustomModal extends Component {
 
     return (
       <Modal isOpen={true} toggle={toggle}>
-        <ModalHeader toggle={toggle}>Restaurants</ModalHeader>
+        <ModalHeader toggle={toggle}>Restaurante</ModalHeader>
         <ModalBody>
           <Form>
             <FormGroup>
@@ -51,14 +51,14 @@ export default class CustomModal extends Component {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="restaurant-foodtype">Tipo de Restaurant</Label>
+              <Label for="restaurant-foodtype">Tipo de Restaurante</Label>
               <Input
                 type="text"
                 id="restaurant-foodtype"
                 name="foodtype"
                 value={this.state.activeItem.foodtype}
                 onChange={this.handleChange}
-                placeholder="Tipo de restaurant"
+                placeholder="Tipo de restaurante"
               />
             </FormGroup>
             <FormGroup>
